@@ -1,15 +1,13 @@
 import React from 'react';
 import { Profile } from 'components/Profile/Profile';
 import css from './FriendList.module.css';
-/*
-От Антон всем 09:16 PM
-чи можна просто title && <h2>{title}<h2/>  ???
-От Катерина Приймакова всем 09:16 PM
-а можна {title && <h2>{title}</h2>}
 
-*/
-
-const FriendList = ({ friends, title = '' }) => {
+const FriendList = ({
+  friends,
+  title = '',
+  handlePrintProfileName,
+  handleDeleteProfile,
+}) => {
   return (
     <div className={css.list}>
       {/* {title.length > 0 && <h2>{title}</h2>} */}
@@ -19,9 +17,12 @@ const FriendList = ({ friends, title = '' }) => {
         return (
           <Profile
             key={friend.id}
+            id={friend.id}
             name={friend.name}
             age={friend.age}
             isFavourite={friend.isFavourite}
+            handlePrintProfileName={handlePrintProfileName}
+            handleDeleteProfile={handleDeleteProfile}
           />
         );
       })}

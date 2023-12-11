@@ -2,8 +2,15 @@
 import cn from 'classnames';
 import css from './Profile.module.css';
 
-const Profile = ({ name, age, isFavourite = false, className = '' }) => {
-  console.log(css);
+const Profile = ({
+  name,
+  age,
+  id,
+  isFavourite = false,
+  className = '',
+  handlePrintProfileName,
+  handleDeleteProfile
+}) => {
   return (
     <p
       style={{
@@ -15,6 +22,8 @@ const Profile = ({ name, age, isFavourite = false, className = '' }) => {
     >
       {isFavourite && '💖'} Hello, <span className={css.accent}>{name}</span>.
       Your age is: {age}.
+      <button onClick={() => handlePrintProfileName(name)}>Print Name</button>
+      <button onClick={() => handleDeleteProfile(id)}>&times;</button>
     </p>
   );
 };
