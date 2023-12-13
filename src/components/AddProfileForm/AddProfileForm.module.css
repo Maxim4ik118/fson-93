@@ -1,0 +1,25 @@
+.form {
+    max-width: 520px;
+    margin: 30px auto 30px;
+    padding: 25px;
+    border: 1px solid black;
+}
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.formLabelCheckbox {
+    flex-direction: row;
+    align-items: center;
+}
+.formLabelText {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.formInput {
+  font-size: 16px;
+}

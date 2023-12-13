@@ -1,5 +1,6 @@
 import { Component } from 'react';
-import { FriendList } from './components/FriendList/FriendList';
+import { FriendList } from 'components/FriendList/FriendList';
+import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
 
 const friendsData = [
   { id: '1', name: 'Max', age: 21, isFavourite: false },
@@ -8,27 +9,42 @@ const friendsData = [
   { id: '4', name: 'Antoniy', age: 19, isFavourite: false },
 ];
 
-// const btn = document.createElement('button');
-// btn.onclick = (event) => console.log('hello')
-
 export class App extends Component {
   state = {
-    counter1: 1,
-    counter2: 4,
     friends: friendsData,
+    filter: '',
   };
 
   handleClick = e => {
-    //  this.state.counter++ ❌
     this.setState({ counter: this.state.counter + 1 });
-    // { counter: 0, ...{ counter: 1 } }
-    // { counter: 0, counter: 1 } -> { counter: 1 }
 
     // this.setState((prevState) => {
     //   return {
     //     counter: prevState.counter + 1
     //   }
     // })
+  };
+
+  handleAddProfile = formData => {
+    // { name: "Andrew", age: 32, isFavourite: true }
+    const hasDuplicates = this.state.friends.some(
+      profile => profile.name === formData.name
+    );
+    if (hasDuplicates) {
+      alert(`Profile with name ${formData.name} already exists!`);
+      return;
+    }
+
+    const finalProfile = {
+      ...formData,
+      id: Math.random().toString(),
+    }; // { id: "0.23123", name: "Andrew", age: 32, isFavourite: true }
+
+    this.setState(prevState => {
+      return {
+        friends: [...prevState.friends, finalProfile],
+      };
+    });
   };
 
   handlePrintProfileName = profileName => {
@@ -41,22 +57,45 @@ export class App extends Component {
     });
   };
 
-  render() {
-    const total = this.state.counter1 + this.state.counter2;
+  handleChangeFilter = event => {
+    const value = event.target.value;
+    this.setState({ filter: value });
+  };
 
+  render() {
+    // "Mama".includes("ma") -> true
+    // "kapusta".includes("pust") -> true
+    // "valik".includes("vat") -> false
+
+    const filteredProfiles = this.state.friends.filter(profile =>
+      profile.name
+        .toLowerCase()
+        .includes(this.state.filter.trim().toLowerCase())
+    );
+
+    const sortedFiltedProfiles = [...filteredProfiles].sort(
+      (a, b) => b.isFavourite - a.isFavourite
+    );
     return (
       <div>
-        {/* <h1>Friends book</h1> */}
-        <p>{this.state.counter}</p>
-        {total}
-        {/* {showPromocode && (
-          <p>Congrats! You won a promocode: #fe423 for a 20% discount!</p>
-        )} */}
-        <button onClick={this.handleClick}>Click me</button>
+        {this.state.filter.trim().toLowerCase() === 'christmas' && (
+          <p>Congrats, you won a promocode for a 35% discount - #4RF2A2; 🎉</p>
+        )}
+        <AddProfileForm handleAddProfile={this.handleAddProfile} />
+        <div>
+          <p>Find Profile:</p>
+          <input
+            value={this.state.filter}
+            onChange={this.handleChangeFilter}
+            type="text"
+            name="keyword"
+            placeholder="Ivan..."
+          />
+        </div>
         <FriendList
           handlePrintProfileName={this.handlePrintProfileName}
           handleDeleteProfile={this.handleDeleteProfile}
-          friends={this.state.friends}
+          friends={sortedFiltedProfiles}
           title="Friends List"
         />
       </div>
