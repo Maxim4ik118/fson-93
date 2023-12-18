@@ -9,7 +9,8 @@ const Profile = ({
   isFavourite = false,
   className = '',
   handlePrintProfileName,
-  handleDeleteProfile
+  handleDeleteProfile,
+  handleShowDetails
 }) => {
   return (
     <p
@@ -23,6 +24,7 @@ const Profile = ({
       {isFavourite && '💖'} Hello, <span className={css.accent}>{name}</span>.
       Your age is: {age}.
       <button onClick={() => handlePrintProfileName(name)}>Print Name</button>
+      <button onClick={() => handleShowDetails(id)}>Show Details</button>
       <button onClick={() => handleDeleteProfile(id)}>&times;</button>
     </p>
   );

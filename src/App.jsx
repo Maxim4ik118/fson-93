@@ -1,6 +1,8 @@
 import { Component } from 'react';
+
 import { FriendList } from 'components/FriendList/FriendList';
 import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
+import { Modal } from 'components/Modal/Modal';
 
 const friendsData = [
   { id: '1', name: 'Max', age: 21, isFavourite: false },
@@ -13,6 +15,8 @@ export class App extends Component {
   state = {
     friends: friendsData,
     filter: '',
+    isOpenModal: false,
+    modalData: null,
   };
 
   handleClick = e => {
@@ -62,11 +66,39 @@ export class App extends Component {
     this.setState({ filter: value });
   };
 
-  render() {
-    // "Mama".includes("ma") -> true
-    // "kapusta".includes("pust") -> true
-    // "valik".includes("vat") -> false
+  handleShowDetails = profileId => {
+    const selectedProfile = this.state.friends.find(
+      friend => friend.id === profileId
+    );
+    this.setState({
+      isOpenModal: true,
+      modalData: selectedProfile,
+    });
+  };
 
+  handleCloseModal = () => {
+    this.setState({ isOpenModal: false });
+  };
+
+  componentDidMount() {
+    const stringifiedFriends = localStorage.getItem('friends');
+    const friends = JSON.parse(stringifiedFriends) ?? [];
+    this.setState({ friends });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // [{}, {}, {}, {}] !== [{}, {}, {}]
+    if(prevState.friends !== this.state.friends) {
+      const stringifiedFriends = JSON.stringify(this.state.friends);
+      localStorage.setItem('friends', stringifiedFriends);
+    }
+
+    if (prevState.isOpenModal !== this.state.isOpenModal) {
+      console.log('state isOpenModal has changed to ' + this.state.isOpenModal);
+    }
+  }
+
+  render() {
     const filteredProfiles = this.state.friends.filter(profile =>
       profile.name
         .toLowerCase()
@@ -95,9 +127,17 @@ export class App extends Component {
         <FriendList
           handlePrintProfileName={this.handlePrintProfileName}
           handleDeleteProfile={this.handleDeleteProfile}
+          handleShowDetails={this.handleShowDetails}
           friends={sortedFiltedProfiles}
           title="Friends List"
         />
+
+        {this.state.isOpenModal && (
+          <Modal
+            modalData={this.state.modalData}
+            handleCloseModal={this.handleCloseModal}
+          />
+        )}
       </div>
     );
   }

@@ -7,6 +7,7 @@ const FriendList = ({
   title = '',
   handlePrintProfileName,
   handleDeleteProfile,
+  handleShowDetails,
 }) => {
   return (
     <div className={css.list}>
@@ -23,6 +24,7 @@ const FriendList = ({
             isFavourite={friend.isFavourite}
             handlePrintProfileName={handlePrintProfileName}
             handleDeleteProfile={handleDeleteProfile}
+            handleShowDetails={handleShowDetails}
           />
         );
       })}
