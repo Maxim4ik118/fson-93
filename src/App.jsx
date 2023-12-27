@@ -1,37 +1,19 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 
 import { FriendList } from 'components/FriendList/FriendList';
 import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
 import { Modal } from 'components/Modal/Modal';
 
-const friendsData = [
-  { id: '1', name: 'Max', age: 21, isFavourite: false },
-  { id: '2', name: 'Oleg', age: 30, isFavourite: true },
-  { id: '3', name: 'Kateryna', age: 23, isFavourite: true },
-  { id: '4', name: 'Antoniy', age: 19, isFavourite: false },
-];
+export const App = () => {
+  const [friends, setFriends] = useState(
+    JSON.parse(localStorage.getItem('friends')) ?? []
+  );
+  const [filter, setFilter] = useState('');
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
-export class App extends Component {
-  state = {
-    friends: friendsData,
-    filter: '',
-    isOpenModal: false,
-    modalData: null,
-  };
-
-  handleClick = e => {
-    this.setState({ counter: this.state.counter + 1 });
-
-    // this.setState((prevState) => {
-    //   return {
-    //     counter: prevState.counter + 1
-    //   }
-    // })
-  };
-
-  handleAddProfile = formData => {
-    // { name: "Andrew", age: 32, isFavourite: true }
-    const hasDuplicates = this.state.friends.some(
+  const handleAddProfile = formData => {
+    const hasDuplicates = friends.some(
       profile => profile.name === formData.name
     );
     if (hasDuplicates) {
@@ -42,103 +24,102 @@ export class App extends Component {
     const finalProfile = {
       ...formData,
       id: Math.random().toString(),
-    }; // { id: "0.23123", name: "Andrew", age: 32, isFavourite: true }
+    };
 
-    this.setState(prevState => {
-      return {
-        friends: [...prevState.friends, finalProfile],
-      };
-    });
+    // this.setState(prevState => {
+    //   return {
+    //     friends: [...prevState.friends, finalProfile],
+    //   };
+    // });
+    setFriends(prevState => [...prevState, finalProfile]);
   };
 
-  handlePrintProfileName = profileName => {
+  const handlePrintProfileName = profileName => {
     console.log('profileName: ', profileName);
   };
 
-  handleDeleteProfile = profileId => {
-    this.setState({
-      friends: this.state.friends.filter(friend => friend.id !== profileId),
-    });
+  const handleDeleteProfile = profileId => {
+    // this.setState({
+    //   friends: this.state.friends.filter(friend => friend.id !== profileId),
+    // });
+    setFriends(friends.filter(friend => friend.id !== profileId));
   };
 
-  handleChangeFilter = event => {
+  const handleChangeFilter = event => {
     const value = event.target.value;
-    this.setState({ filter: value });
+    // this.setState({ filter: value });
+    setFilter(value);
   };
 
-  handleShowDetails = profileId => {
-    const selectedProfile = this.state.friends.find(
-      friend => friend.id === profileId
-    );
-    this.setState({
-      isOpenModal: true,
-      modalData: selectedProfile,
-    });
+  const handleShowDetails = profileId => {
+    const selectedProfile = friends.find(friend => friend.id === profileId);
+    // this.setState({
+    //   isOpenModal: true,
+    //   modalData: selectedProfile,
+    // });
+    setIsOpenModal(true);
+    setModalData(selectedProfile);
   };
 
-  handleCloseModal = () => {
-    this.setState({ isOpenModal: false });
+  const handleCloseModal = () => {
+    // this.setState({ isOpenModal: false });
+    setIsOpenModal(false);
   };
 
-  componentDidMount() {
-    const stringifiedFriends = localStorage.getItem('friends');
-    const friends = JSON.parse(stringifiedFriends) ?? [];
-    this.setState({ friends });
-  }
+  useEffect(() => {
+    const stringifiedFriends = JSON.stringify(friends);
+    localStorage.setItem('friends', stringifiedFriends);
+  }, [friends]);
 
-  componentDidUpdate(prevProps, prevState) {
-    // [{}, {}, {}, {}] !== [{}, {}, {}]
-    if(prevState.friends !== this.state.friends) {
-      const stringifiedFriends = JSON.stringify(this.state.friends);
-      localStorage.setItem('friends', stringifiedFriends);
-    }
+  useEffect(() => {
+    console.log('state isOpenModal has changed to ' + isOpenModal);
+  }, [isOpenModal]);
 
-    if (prevState.isOpenModal !== this.state.isOpenModal) {
-      console.log('state isOpenModal has changed to ' + this.state.isOpenModal);
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.friends !== this.state.friends) {
+  //     const stringifiedFriends = JSON.stringify(this.state.friends);
+  //     localStorage.setItem('friends', stringifiedFriends);
+  //   }
 
-  render() {
-    const filteredProfiles = this.state.friends.filter(profile =>
-      profile.name
-        .toLowerCase()
-        .includes(this.state.filter.trim().toLowerCase())
-    );
+  //   if (prevState.isOpenModal !== this.state.isOpenModal) {
+  //     console.log('state isOpenModal has changed to ' + this.state.isOpenModal);
+  //   }
+  // }
 
-    const sortedFiltedProfiles = [...filteredProfiles].sort(
-      (a, b) => b.isFavourite - a.isFavourite
-    );
-    return (
+  const filteredProfiles = friends.filter(profile =>
+    profile.name.toLowerCase().includes(filter.trim().toLowerCase())
+  );
+
+  const sortedFiltedProfiles = [...filteredProfiles].sort(
+    (a, b) => b.isFavourite - a.isFavourite
+  );
+  return (
+    <div>
+      {filter.trim().toLowerCase() === 'christmas' && (
+        <p>Congrats, you won a promocode for a 35% discount - #4RF2A2; 🎉</p>
+      )}
+      <AddProfileForm handleAddProfile={handleAddProfile} />
       <div>
-        {this.state.filter.trim().toLowerCase() === 'christmas' && (
-          <p>Congrats, you won a promocode for a 35% discount - #4RF2A2; 🎉</p>
-        )}
-        <AddProfileForm handleAddProfile={this.handleAddProfile} />
-        <div>
-          <p>Find Profile:</p>
-          <input
-            value={this.state.filter}
-            onChange={this.handleChangeFilter}
-            type="text"
-            name="keyword"
-            placeholder="Ivan..."
-          />
-        </div>
-        <FriendList
-          handlePrintProfileName={this.handlePrintProfileName}
-          handleDeleteProfile={this.handleDeleteProfile}
-          handleShowDetails={this.handleShowDetails}
-          friends={sortedFiltedProfiles}
-          title="Friends List"
+        <p>Find Profile:</p>
+        <input
+          value={filter}
+          onChange={handleChangeFilter}
+          type="text"
+          name="keyword"
+          placeholder="Ivan..."
         />
-
-        {this.state.isOpenModal && (
-          <Modal
-            modalData={this.state.modalData}
-            handleCloseModal={this.handleCloseModal}
-          />
-        )}
       </div>
-    );
-  }
-}
+      <FriendList
+        handlePrintProfileName={handlePrintProfileName}
+        handleDeleteProfile={handleDeleteProfile}
+        handleShowDetails={handleShowDetails}
+        friends={sortedFiltedProfiles}
+        title="Friends List"
+      />
+
+      {isOpenModal && (
+        <Modal modalData={modalData} handleCloseModal={handleCloseModal} />
+      )}
+    </div>
+  );
+};

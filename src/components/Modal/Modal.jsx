@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import css from './Modal.module.css';
 
@@ -24,48 +24,112 @@ import css from './Modal.module.css';
     - надсилають мережеві запити.
     - оновлються(синхронізуються) стейт з локальним сховищем.
     - відслідковується яка частина стану, або пропсів змінилася (prevState.isModalOpen !=== this.state.isModalOpen)
-  
-
 */
 
+// export class Modal extends Component {
 
-export class Modal extends Component {
+//   handleOverlayClick = (event) => {
+//     if(event.target === event.currentTarget) {
+//       this.props.handleCloseModal();
+//     }
+//   }
 
-  handleOverlayClick = (event) => {
-    if(event.target === event.currentTarget) {
-      this.props.handleCloseModal();
+//   handleKeyPress = (event) => {
+//     if(event.code === "Escape") {
+//       this.props.handleCloseModal();
+//     }
+//   }
+
+//   componentDidMount() {
+//     document.body.style.overflow = "hidden";
+
+//     window.addEventListener("keydown", this.handleKeyPress)
+//   }
+
+//   componentWillUnmount() {
+//     document.body.style.overflow = "auto";
+
+//     window.removeEventListener("keydown", this.handleKeyPress)
+//   }
+
+//   render() {
+//     return (
+//       <div className={css.overlay} onClick={this.handleOverlayClick}>
+//         <div className={css.modal}>
+//           <button onClick={this.props.handleCloseModal} className={css.closeModalBtn}>&times;</button>
+//           <h2>Profile Details</h2>
+//           <p>Profile Name: {this.props.modalData.name}</p>
+//           <p>Profile Age: {this.props.modalData.age}</p>
+//           <p>Is profile favourite?: {this.props.modalData.isFavourite ? '❤' : '🤷‍♂️'} </p>
+//         </div>
+//       </div>
+//     );
+//   }
+// }
+
+export const Modal = ({ handleCloseModal, modalData }) => {
+  const [clickCounter, setClickCounter] = useState(0);
+  const [tabPanel, setTabPanel] = useState('users'); // "users" | "groups" | "comments"
+
+  const handleOverlayClick = event => {
+    if (event.target === event.currentTarget) {
+      handleCloseModal();
     }
-  }
+  };
 
-  handleKeyPress = (event) => {
-    if(event.code === "Escape") {
-      this.props.handleCloseModal();
-    }
-  }
+  useEffect(() => {
+    const handleKeyPress = event => {
+      if (event.code === 'Escape') {
+        handleCloseModal();
+      }
+    };
 
-  componentDidMount() {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyPress);
 
-    window.addEventListener("keydown", this.handleKeyPress)
-  }
+    return () => {
+      document.body.style.overflow = 'auto';
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleCloseModal]);
 
-  componentWillUnmount() {
-    document.body.style.overflow = "auto";
 
-    window.removeEventListener("keydown", this.handleKeyPress)
-  }
+  useEffect(() => {
+    console.log("Current tab panel is ", tabPanel)
+  }, [tabPanel])
 
-  render() {
-    return (
-      <div className={css.overlay} onClick={this.handleOverlayClick}>
-        <div className={css.modal}>
-          <button onClick={this.props.handleCloseModal} className={css.closeModalBtn}>&times;</button>
-          <h2>Profile Details</h2>
-          <p>Profile Name: {this.props.modalData.name}</p>
-          <p>Profile Age: {this.props.modalData.age}</p>
-          <p>Is profile favourite?: {this.props.modalData.isFavourite ? '❤' : '🤷‍♂️'} </p>
-        </div>
+  const handleCounterClick = () => {
+    setClickCounter(prevState => prevState + 1);
+  };
+
+  return (
+    <div className={css.overlay} onClick={handleOverlayClick}>
+      <div className={css.modal}>
+        <button onClick={handleCloseModal} className={css.closeModalBtn}>
+          &times;
+        </button>
+        <br />
+        <br />
+        <p>Click counter: {clickCounter}</p>
+        <button onClick={handleCounterClick}>Change counter</button>
+        <br />
+        <br />
+
+        <button onClick={() => setTabPanel('users')}>Users</button>
+        <button onClick={() => setTabPanel('groups')}>Groups</button>
+        <button onClick={() => setTabPanel('comments')}>Comments</button>
+
+        {tabPanel === 'users' && (
+          <>
+            <h2>Profile Details</h2>
+            <p>Profile Name: {modalData.name}</p>
+            <p>Profile Age: {modalData.age}</p>
+            <p>Is profile favourite?: {modalData.isFavourite ? '❤' : '🤷‍♂️'} </p>
+          </>
+        )}
+        {tabPanel === 'groups' && <p>Here goes some groups</p>}
+        {tabPanel === 'comments' && <p>Here goes comments!!</p>}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
