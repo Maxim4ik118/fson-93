@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { FriendList } from 'components/FriendList/FriendList';
 import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
@@ -86,13 +86,14 @@ export const App = () => {
   //   }
   // }
 
-  const filteredProfiles = friends.filter(profile =>
+  const filteredProfiles = useMemo(() => friends.filter(profile =>
     profile.name.toLowerCase().includes(filter.trim().toLowerCase())
-  );
+  ), [filter, friends]);
 
-  const sortedFiltedProfiles = [...filteredProfiles].sort(
+  const sortedFiltedProfiles = useMemo(() => [...filteredProfiles].sort(
     (a, b) => b.isFavourite - a.isFavourite
-  );
+  ), [filteredProfiles]);
+  
   return (
     <div>
       {filter.trim().toLowerCase() === 'christmas' && (

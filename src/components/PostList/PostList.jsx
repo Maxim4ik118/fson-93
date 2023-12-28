@@ -2,7 +2,7 @@ import React from 'react';
 
 import css from '../../AppHTTPRequest.module.css';
 
-export const PostList = ({ posts }) => {
+export const PostList = ({ posts, visiblePosts }) => {
   return (
     <div>
       {Array.isArray(posts) && posts.length === 0 && (
@@ -10,7 +10,7 @@ export const PostList = ({ posts }) => {
       )}
       <ul className={css.postList}>
         {Array.isArray(posts) &&
-          posts.map(post => {
+          posts.slice(0, visiblePosts).map(post => {
             return (
               <li key={post.id} className={css.postListItem}>
                 <h2 className={css.itemTitle}>Title: {post.title}</h2>

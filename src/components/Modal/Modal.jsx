@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import css from './Modal.module.css';
 
@@ -67,9 +67,18 @@ import css from './Modal.module.css';
 //   }
 // }
 
+// const button = document.querySelector('.close-modal-btn')
+// button.style.width = '500px';
+// button.textContent = "Close Modal";
+// button.focus();
+
+
 export const Modal = ({ handleCloseModal, modalData }) => {
   const [clickCounter, setClickCounter] = useState(0);
   const [tabPanel, setTabPanel] = useState('users'); // "users" | "groups" | "comments"
+  const buttonRef = useRef();
+  const inputRef = useRef();
+  const isFirstRenderRef = useRef(true);
 
   const handleOverlayClick = event => {
     if (event.target === event.currentTarget) {
@@ -93,13 +102,22 @@ export const Modal = ({ handleCloseModal, modalData }) => {
     };
   }, [handleCloseModal]);
 
+  useEffect(() => {
+    if(!isFirstRenderRef.current) {
+      console.log('Tab panel: ' + tabPanel)
+    }
+
+    return () => isFirstRenderRef.current = false
+  }, [tabPanel])
 
   useEffect(() => {
-    console.log("Current tab panel is ", tabPanel)
-  }, [tabPanel])
+    inputRef.current.focus();
+  }, [])
 
   const handleCounterClick = () => {
     setClickCounter(prevState => prevState + 1);
+    // console.log(buttonRef.current.textContent);
+    inputRef.current.focus();
   };
 
   return (
@@ -111,10 +129,14 @@ export const Modal = ({ handleCloseModal, modalData }) => {
         <br />
         <br />
         <p>Click counter: {clickCounter}</p>
-        <button onClick={handleCounterClick}>Change counter</button>
+        <button ref={buttonRef} onClick={handleCounterClick}>Change counter</button>
         <br />
         <br />
-
+        <label >
+          <span>Some text input</span>
+          <input type="text" ref={inputRef} placeholder='Hello fson93' />
+        </label>
+        <br />
         <button onClick={() => setTabPanel('users')}>Users</button>
         <button onClick={() => setTabPanel('groups')}>Groups</button>
         <button onClick={() => setTabPanel('comments')}>Comments</button>
