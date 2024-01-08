@@ -45,6 +45,26 @@
   border-color: #0000fb transparent #0008fa transparent;
   animation: loader 1.2s infinite;
 }
+
+.navLink {
+  display: inline-flex;
+  padding: 20px;
+  min-width: 100px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  background-color: transparent;
+  font-weight: 500;
+  border-radius: 7px;
+  color: inherit;
+  text-decoration: none;
+  transition: all .3s;
+}
+.active {
+  background-color: black;
+  color: white;
+}
+
 @keyframes loader {
   0% {
     transform: rotate(0);

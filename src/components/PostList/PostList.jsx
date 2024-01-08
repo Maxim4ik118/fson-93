@@ -1,6 +1,7 @@
 import React from 'react';
 
 import css from '../../AppHTTPRequest.module.css';
+import { Link } from 'react-router-dom';
 
 export const PostList = ({ posts, visiblePosts }) => {
   return (
@@ -13,13 +14,16 @@ export const PostList = ({ posts, visiblePosts }) => {
           posts.slice(0, visiblePosts).map(post => {
             return (
               <li key={post.id} className={css.postListItem}>
-                <h2 className={css.itemTitle}>Title: {post.title}</h2>
-                <p className={css.itemId}>Post Id: {post.id}</p>
-                <p className={css.itemBody}>Body: {post.body}</p>
+                <Link to={`/posts/${post.id}`}>
+                {/* <Link to={`/posts/5`}> */}
+                  <h2 className={css.itemTitle}>Title: {post.title}</h2>
+                  <p className={css.itemId}>Post Id: {post.id}</p>
+                  <p className={css.itemBody}>Body: {post.body}</p>
+                </Link>
               </li>
             );
           })}
-      </ul>{' '}
+      </ul>
     </div>
   );
 };
