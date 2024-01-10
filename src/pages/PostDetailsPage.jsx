@@ -1,16 +1,28 @@
-import { NavLink, Route, Routes, useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import {
+  Link,
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { Loader } from 'components/Loader/Loader';
 
 import { STATUSES } from 'utils/constants';
 import { requestPostDetailsById } from 'services/api';
+
 import css from 'AppHTTPRequest.module.css';
-import CommentsPage from './CommentsPage';
+
+// import CommentsPage from './CommentsPage';
+const CommentsPage = lazy(() => import('./CommentsPage'));
 
 const PostDetailsPage = () => {
   const { postId } = useParams();
+  const location = useLocation();
+  const backLinkRef = useRef(location.state?.from ?? '/posts');
   const [postDetails, setPostDetails] = useState(null);
   const [status, setStatus] = useState(STATUSES.idle); // "idle" | "pending" | "success" | "error"
   const [error, setError] = useState(null);
@@ -34,6 +46,7 @@ const PostDetailsPage = () => {
   return (
     <div>
       <h2>Post Details</h2>
+      <Link to={backLinkRef.current}>Go back</Link>
       {status === STATUSES.pending && <Loader className={css.loader} />}
       {status === STATUSES.error && <ErrorMessage error={error} />}
       {status === STATUSES.success && (
@@ -52,9 +65,11 @@ const PostDetailsPage = () => {
         Comments
       </NavLink>
       <div>
-        <Routes>
-          <Route path="comments" element={<CommentsPage />}/>
-        </Routes>
+        <Suspense fallback={<Loader className={css.loader} />}>
+          <Routes>
+            <Route path="comments" element={<CommentsPage />} />
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );

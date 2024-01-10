@@ -2,7 +2,7 @@ import React from 'react';
 import { Profile } from 'components/Profile/Profile';
 import css from './FriendList.module.css';
 
-const FriendList = ({
+export const FriendList = ({
   friends,
   title = '',
   handlePrintProfileName,
@@ -32,4 +32,3 @@ const FriendList = ({
   );
 };
 
-export { FriendList };

@@ -1,29 +1,38 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { Layout } from 'components/Layout/Layout';
+import { Loader } from 'components/Loader/Loader';
 
-import HomePage from 'pages/HomePage';
-import PostsPage from 'pages/PostsPage';
-import SearchPostPage from 'pages/SearchPostPage';
-import PostDetailsPage from 'pages/PostDetailsPage';
+import css from 'AppHTTPRequest.module.css'
+// import HomePage from 'pages/HomePage';
+// import PostsPage from 'pages/PostsPage';
+// import SearchPostPage from 'pages/SearchPostPage';
+// import PostDetailsPage from 'pages/PostDetailsPage';
+
+const HomePage = lazy(() => import('pages/HomePage'));
+const PostsPage = lazy(() => import('pages/PostsPage'));
+const SearchPostPage = lazy(() => import('pages/SearchPostPage'));
+const PostDetailsPage = lazy(() => import('pages/PostDetailsPage'));
 
 /*
 Маршрутеризація складається з двух етапів:
-1. Змінити адресну строку.
-2. Підготувати маршрути з відповідними шляхами та компонентами(сторінками).
+1. Змінити адресну строку. (Link, NavLink)
+2. Підготувати маршрути з відповідними шляхами та компонентами(сторінками). (Route)
 
 */
 export default function AppHTTPRequests() {
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/posts" element={<PostsPage />} />
-        {/* /posts/1 */}
-        <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
-        <Route path="/search" element={<SearchPostPage />} />
-      </Routes>
+      <Suspense fallback={<Loader className={css.loader}  />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/posts" element={<PostsPage />} />
+          <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
+          <Route path="/search" element={<SearchPostPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Suspense>
     </Layout>
   );
 }

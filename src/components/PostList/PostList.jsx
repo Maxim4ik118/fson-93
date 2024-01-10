@@ -1,9 +1,11 @@
 import React from 'react';
 
 import css from '../../AppHTTPRequest.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export const PostList = ({ posts, visiblePosts }) => {
+  const location = useLocation()
+
   return (
     <div>
       {Array.isArray(posts) && posts.length === 0 && (
@@ -14,7 +16,7 @@ export const PostList = ({ posts, visiblePosts }) => {
           posts.slice(0, visiblePosts).map(post => {
             return (
               <li key={post.id} className={css.postListItem}>
-                <Link to={`/posts/${post.id}`}>
+                <Link state={{ from: location }} to={`/posts/${post.id}`}>
                 {/* <Link to={`/posts/5`}> */}
                   <h2 className={css.itemTitle}>Title: {post.title}</h2>
                   <p className={css.itemId}>Post Id: {post.id}</p>
