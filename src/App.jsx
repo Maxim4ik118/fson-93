@@ -1,14 +1,34 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { FriendList } from 'components/FriendList/FriendList';
 import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
 import { Modal } from 'components/Modal/Modal';
 
+/*
+Як працювати з Редакс?
+
+1. Встановити бібліотеки "redux" та "react-redux"
+2. Створи "store", та підключити його до App через Provider
+3. Створити редьюсер і продумати його "initalState"
+4. Підключити редьюсер до "store" за допомогою "combineReducers"
+5. Cпробувати отримати дані зі "store" в середині будь-якої компонети 
+   за допомого "useSelector" - const friends = useSelector(store => store.friendsScope.friends)
+6. Отримаємо логістичну фу-цію "dispatch" за допомогою "useDispatch"
+7. Створити екшин(об`єкт інструкції) з відповідним "type" (не забути 
+   про payload якщо він потрібен) і задіспатчити його - dispatch(action)
+*/
+
+
 export const App = () => {
-  const [friends, setFriends] = useState(
-    JSON.parse(localStorage.getItem('friends')) ?? []
-  );
-  const [filter, setFilter] = useState('');
+  // const [friends, setFriends] = useState(
+  //   JSON.parse(localStorage.getItem('friends')) ?? []
+  // );
+  // const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const friends = useSelector(store => store.friendsScope.friends);
+  const filter = useSelector(store => store.friendsScope.filter);
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalData, setModalData] = useState(null);
 
@@ -25,13 +45,12 @@ export const App = () => {
       ...formData,
       id: Math.random().toString(),
     };
-
-    // this.setState(prevState => {
-    //   return {
-    //     friends: [...prevState.friends, finalProfile],
-    //   };
-    // });
-    setFriends(prevState => [...prevState, finalProfile]);
+    // setFriends(prevState => [...prevState, finalProfile]);
+    const action = {
+      type: "friends/addFriend",
+      payload: finalProfile
+    }
+    dispatch(action);
   };
 
   const handlePrintProfileName = profileName => {
@@ -39,30 +58,31 @@ export const App = () => {
   };
 
   const handleDeleteProfile = profileId => {
-    // this.setState({
-    //   friends: this.state.friends.filter(friend => friend.id !== profileId),
-    // });
-    setFriends(friends.filter(friend => friend.id !== profileId));
+    const action = {
+      type: 'friends/removeFriend',
+      payload: profileId
+    }
+    dispatch(action);
+    // setFriends(friends.filter(friend => friend.id !== profileId));
   };
 
   const handleChangeFilter = event => {
     const value = event.target.value;
-    // this.setState({ filter: value });
-    setFilter(value);
+    const action = {
+      type: 'friends/setFilter',
+      payload: value
+    }
+    dispatch(action);
+    // setFilter(value);
   };
 
   const handleShowDetails = profileId => {
     const selectedProfile = friends.find(friend => friend.id === profileId);
-    // this.setState({
-    //   isOpenModal: true,
-    //   modalData: selectedProfile,
-    // });
     setIsOpenModal(true);
     setModalData(selectedProfile);
   };
 
   const handleCloseModal = () => {
-    // this.setState({ isOpenModal: false });
     setIsOpenModal(false);
   };
 
@@ -71,29 +91,19 @@ export const App = () => {
     localStorage.setItem('friends', stringifiedFriends);
   }, [friends]);
 
-  useEffect(() => {
-    console.log('state isOpenModal has changed to ' + isOpenModal);
-  }, [isOpenModal]);
+  const filteredProfiles = useMemo(
+    () =>
+      friends.filter(profile =>
+        profile.name.toLowerCase().includes(filter.trim().toLowerCase())
+      ),
+    [filter, friends]
+  );
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevState.friends !== this.state.friends) {
-  //     const stringifiedFriends = JSON.stringify(this.state.friends);
-  //     localStorage.setItem('friends', stringifiedFriends);
-  //   }
+  const sortedFiltedProfiles = useMemo(
+    () => [...filteredProfiles].sort((a, b) => b.isFavourite - a.isFavourite),
+    [filteredProfiles]
+  );
 
-  //   if (prevState.isOpenModal !== this.state.isOpenModal) {
-  //     console.log('state isOpenModal has changed to ' + this.state.isOpenModal);
-  //   }
-  // }
-
-  const filteredProfiles = useMemo(() => friends.filter(profile =>
-    profile.name.toLowerCase().includes(filter.trim().toLowerCase())
-  ), [filter, friends]);
-
-  const sortedFiltedProfiles = useMemo(() => [...filteredProfiles].sort(
-    (a, b) => b.isFavourite - a.isFavourite
-  ), [filteredProfiles]);
-  
   return (
     <div>
       {filter.trim().toLowerCase() === 'christmas' && (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Profile } from 'components/Profile/Profile';
 import css from './FriendList.module.css';
+// import { useSelector } from 'react-redux';
 
 export const FriendList = ({
   friends,
@@ -9,11 +10,14 @@ export const FriendList = ({
   handleDeleteProfile,
   handleShowDetails,
 }) => {
+  // const someName = useSelector(store => store.ssssssName);
+  // const products = useSelector(store => store.products);
+  // const error = useSelector(store => store.error);
+  // const isLoading = useSelector(store => store.isLoading);
+
   return (
     <div className={css.list}>
-      {/* {title.length > 0 && <h2>{title}</h2>} */}
       {title && <h2>{title}</h2>}
-      {/* {Array.isArray(friends) && friends.map(friend => { */}
       {friends?.map(friend => {
         return (
           <Profile
@@ -31,4 +35,3 @@ export const FriendList = ({
     </div>
   );
 };
-
