@@ -1,8 +1,9 @@
-import { Loader } from 'components/Loader/Loader';
-import { PostList } from 'components/PostList/PostList';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
+import { Loader, PostList } from 'components';
+
 import { requestPostDetailsById } from 'services/api';
 
 const SearchPostPage = () => {

@@ -1,14 +1,9 @@
 import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { Layout } from 'components/Layout/Layout';
-import { Loader } from 'components/Loader/Loader';
+import { Layout, Loader } from 'components';
 
-import css from 'AppHTTPRequest.module.css'
-// import HomePage from 'pages/HomePage';
-// import PostsPage from 'pages/PostsPage';
-// import SearchPostPage from 'pages/SearchPostPage';
-// import PostDetailsPage from 'pages/PostDetailsPage';
+import css from 'AppHTTPRequest.module.css';
 
 const HomePage = lazy(() => import('pages/HomePage'));
 const PostsPage = lazy(() => import('pages/PostsPage'));
@@ -24,7 +19,7 @@ const PostDetailsPage = lazy(() => import('pages/PostDetailsPage'));
 export default function AppHTTPRequests() {
   return (
     <Layout>
-      <Suspense fallback={<Loader className={css.loader}  />}>
+      <Suspense fallback={<Loader className={css.loader} />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/posts" element={<PostsPage />} />

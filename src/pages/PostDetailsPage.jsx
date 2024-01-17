@@ -8,8 +8,7 @@ import {
 } from 'react-router-dom';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
-import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-import { Loader } from 'components/Loader/Loader';
+import { ErrorMessage, Loader } from 'components';
 
 import { STATUSES } from 'utils/constants';
 import { requestPostDetailsById } from 'services/api';

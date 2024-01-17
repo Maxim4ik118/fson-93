@@ -1,9 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { FriendList } from 'components/FriendList/FriendList';
-import { AddProfileForm } from 'components/AddProfileForm/AddProfileForm';
-import { Modal } from 'components/Modal/Modal';
+import { AddProfileForm, FriendList, Modal } from 'components';
+
+import {
+  addFriend,
+  removeFriend,
+  setFilter,
+} from './redux/friends/friendsSlice';
+import { closeModal, openModal } from './redux/modal/modalSlice';
 
 /*
 Як працювати з Редакс?
@@ -19,18 +24,15 @@ import { Modal } from 'components/Modal/Modal';
    про payload якщо він потрібен) і задіспатчити його - dispatch(action)
 */
 
-
 export const App = () => {
-  // const [friends, setFriends] = useState(
-  //   JSON.parse(localStorage.getItem('friends')) ?? []
-  // );
-  // const [filter, setFilter] = useState('');
   const dispatch = useDispatch();
   const friends = useSelector(store => store.friendsScope.friends);
   const filter = useSelector(store => store.friendsScope.filter);
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [modalData, setModalData] = useState(null);
+  // const [isOpenModal, setIsOpenModal] = useState(false);
+  // const [modalData, setModalData] = useState(null);
+  const isOpenModal = useSelector(store => store.modal.isOpenModal);
+  const modalData = useSelector(store => store.modal.modalData);
 
   const handleAddProfile = formData => {
     const hasDuplicates = friends.some(
@@ -45,11 +47,8 @@ export const App = () => {
       ...formData,
       id: Math.random().toString(),
     };
-    // setFriends(prevState => [...prevState, finalProfile]);
-    const action = {
-      type: "friends/addFriend",
-      payload: finalProfile
-    }
+
+    const action = addFriend(finalProfile);
     dispatch(action);
   };
 
@@ -58,38 +57,25 @@ export const App = () => {
   };
 
   const handleDeleteProfile = profileId => {
-    const action = {
-      type: 'friends/removeFriend',
-      payload: profileId
-    }
+    const action = removeFriend(profileId);
     dispatch(action);
-    // setFriends(friends.filter(friend => friend.id !== profileId));
   };
 
   const handleChangeFilter = event => {
     const value = event.target.value;
-    const action = {
-      type: 'friends/setFilter',
-      payload: value
-    }
+    const action = setFilter(value);
     dispatch(action);
-    // setFilter(value);
   };
 
   const handleShowDetails = profileId => {
     const selectedProfile = friends.find(friend => friend.id === profileId);
-    setIsOpenModal(true);
-    setModalData(selectedProfile);
+    dispatch(openModal(selectedProfile));
+    // -> { type: '...' , payload: selectedProfile}
   };
 
   const handleCloseModal = () => {
-    setIsOpenModal(false);
+    dispatch(closeModal()); // -> { type: '...' }
   };
-
-  useEffect(() => {
-    const stringifiedFriends = JSON.stringify(friends);
-    localStorage.setItem('friends', stringifiedFriends);
-  }, [friends]);
 
   const filteredProfiles = useMemo(
     () =>

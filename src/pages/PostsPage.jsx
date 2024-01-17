@@ -1,7 +1,7 @@
-import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-import { Loader } from 'components/Loader/Loader';
-import { PostList } from 'components/PostList/PostList';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { ErrorMessage, Loader , PostList } from 'components';
+
 import { requestPosts } from 'services/api';
 import { POSTS_PER_PAGE, STATUSES } from 'utils/constants';
 
