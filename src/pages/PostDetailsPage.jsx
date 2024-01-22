@@ -6,12 +6,14 @@ import {
   useLocation,
   useParams,
 } from 'react-router-dom';
-import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useRef } from 'react';
 
 import { ErrorMessage, Loader } from 'components';
 
 import { STATUSES } from 'utils/constants';
-import { requestPostDetailsById } from 'services/api';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { apiGetPostDetails } from '../redux/posts/postsSlice';
 
 import css from 'AppHTTPRequest.module.css';
 
@@ -20,27 +22,17 @@ const CommentsPage = lazy(() => import('./CommentsPage'));
 
 const PostDetailsPage = () => {
   const { postId } = useParams();
+  const dispatch = useDispatch();
   const location = useLocation();
   const backLinkRef = useRef(location.state?.from ?? '/posts');
-  const [postDetails, setPostDetails] = useState(null);
-  const [status, setStatus] = useState(STATUSES.idle); // "idle" | "pending" | "success" | "error"
-  const [error, setError] = useState(null);
+
+  const postDetails = useSelector(state => state.posts.postDetails);
+  const status = useSelector(state => state.posts.status);
+  const error = useSelector(state => state.posts.error);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setStatus(STATUSES.pending);
-        const postData = await requestPostDetailsById(postId);
-        setPostDetails(postData);
-        setStatus(STATUSES.success);
-      } catch (error) {
-        setError(error.message);
-        setStatus(STATUSES.error);
-      }
-    };
-
-    fetchPosts();
-  }, [postId]);
+   dispatch(apiGetPostDetails(postId))
+  }, [postId, dispatch]);
 
   return (
     <div>

@@ -14,6 +14,7 @@ import storage from 'redux-persist/lib/storage';
 
 import { friendsReducer } from './friends/friendsSlice';
 import { modalReducer } from './modal/modalSlice';
+import { postsReducer } from './posts/postsSlice';
 
 const friendsConfig = {
   key: 'friends',
@@ -26,6 +27,7 @@ export const store = configureStore({
   reducer: {
     friendsScope: persistReducer(friendsConfig, friendsReducer),
     modal: modalReducer,
+    posts: postsReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

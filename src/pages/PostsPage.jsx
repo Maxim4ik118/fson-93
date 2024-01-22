@@ -1,47 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { ErrorMessage, Loader , PostList } from 'components';
+import { ErrorMessage, Loader, PostList } from 'components';
 
-import { requestPosts } from 'services/api';
+import { apiGetPosts, incrementPage } from '../redux/posts/postsSlice';
 import { POSTS_PER_PAGE, STATUSES } from 'utils/constants';
 
 import css from 'AppHTTPRequest.module.css';
+import { useDispatch, useSelector } from 'react-redux';
 
 const PostsPage = () => {
-  const [posts, setPosts] = useState(null);
-  const [status, setStatus] = useState(STATUSES.idle); // "idle" | "pending" | "success" | "error"
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const dispatch = useDispatch();
+  const posts = useSelector(state => state.posts.posts);
+  const status = useSelector(state => state.posts.status);
+  const error = useSelector(state => state.posts.error);
+  const page = useSelector(state => state.posts.page);
+
   const loadMoreRef = useRef();
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setStatus(STATUSES.pending);
-        const posts = await requestPosts();
-        setPosts(posts);
-        setStatus(STATUSES.success);
-      } catch (error) {
-        setError(error.message);
-        setStatus(STATUSES.error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
+    dispatch(apiGetPosts());
+  }, [dispatch]);
 
   const handleLoadMore = () => {
-    setPage(prevPage => prevPage + 1);
+    dispatch(incrementPage());
   };
 
   const showPosts = status === STATUSES.success && Array.isArray(posts);
   const visiblePosts = POSTS_PER_PAGE * page;
 
+  const renderView = {
+    [STATUSES.pending]: <Loader className={css.loader} />,
+    [STATUSES.error]: <ErrorMessage error={error} />,
+    [STATUSES.success]: showPosts && (
+      <PostList posts={posts} visiblePosts={visiblePosts} />
+    ),
+  };
+
   return (
     <div>
-      {status === STATUSES.pending && <Loader className={css.loader} />}
-      {status === STATUSES.error && <ErrorMessage error={error} />}
-      {showPosts && <PostList posts={posts} visiblePosts={visiblePosts} />}
+      {renderView[status]}
       <button ref={loadMoreRef} onClick={handleLoadMore}>
         Load more
       </button>
