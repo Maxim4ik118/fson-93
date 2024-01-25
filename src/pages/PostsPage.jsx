@@ -1,19 +1,25 @@
 import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ErrorMessage, Loader, PostList } from 'components';
 
 import { apiGetPosts, incrementPage } from '../redux/posts/postsSlice';
+import {
+  selectPostDetailsError,
+  selectPostDetailsPage,
+  selectPostDetailsPosts,
+  selectPostDetailsStatus,
+} from 'redux/posts/postSlice.selectors';
 import { POSTS_PER_PAGE, STATUSES } from 'utils/constants';
 
 import css from 'AppHTTPRequest.module.css';
-import { useDispatch, useSelector } from 'react-redux';
 
 const PostsPage = () => {
   const dispatch = useDispatch();
-  const posts = useSelector(state => state.posts.posts);
-  const status = useSelector(state => state.posts.status);
-  const error = useSelector(state => state.posts.error);
-  const page = useSelector(state => state.posts.page);
+  const posts = useSelector(selectPostDetailsPosts);
+  const status = useSelector(selectPostDetailsStatus);
+  const error = useSelector(selectPostDetailsError);
+  const page = useSelector(selectPostDetailsPage);
 
   const loadMoreRef = useRef();
 

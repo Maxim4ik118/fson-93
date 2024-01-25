@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apiGetPostDetails } from '../redux/posts/postsSlice';
 
 import css from 'AppHTTPRequest.module.css';
+import { selectPostDetails, selectPostDetailsError, selectPostDetailsStatus } from 'redux/posts/postSlice.selectors';
 
 // import CommentsPage from './CommentsPage';
 const CommentsPage = lazy(() => import('./CommentsPage'));
@@ -26,9 +27,9 @@ const PostDetailsPage = () => {
   const location = useLocation();
   const backLinkRef = useRef(location.state?.from ?? '/posts');
 
-  const postDetails = useSelector(state => state.posts.postDetails);
-  const status = useSelector(state => state.posts.status);
-  const error = useSelector(state => state.posts.error);
+  const postDetails = useSelector(selectPostDetails);
+  const status = useSelector(selectPostDetailsStatus);
+  const error = useSelector(selectPostDetailsError);
 
   useEffect(() => {
    dispatch(apiGetPostDetails(postId))

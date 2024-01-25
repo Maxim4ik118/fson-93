@@ -1,14 +1,21 @@
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { AddProfileForm, FriendList, Modal } from 'components';
+import { AddProfileForm, Filter, FriendList, Modal } from 'components';
 
 import {
   addFriend,
   removeFriend,
-  setFilter,
 } from './redux/friends/friendsSlice';
 import { closeModal, openModal } from './redux/modal/modalSlice';
+import {
+  selectFilteredFriends,
+  selectFriends,
+} from './redux/friends/friendsSlice.selectors';
+import {
+  selectIsOpenModal,
+  selectModalData,
+} from './redux/modal/modalSlice.selectors';
 
 /*
 Як працювати з Редакс?
@@ -26,23 +33,12 @@ import { closeModal, openModal } from './redux/modal/modalSlice';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const friends = useSelector(store => store.friendsScope.friends);
-  const filter = useSelector(store => store.friendsScope.filter);
-
-  // const [isOpenModal, setIsOpenModal] = useState(false);
-  // const [modalData, setModalData] = useState(null);
-  const isOpenModal = useSelector(store => store.modal.isOpenModal);
-  const modalData = useSelector(store => store.modal.modalData);
+  const friends = useSelector(selectFriends);
+  const filteredProfiles = useSelector(selectFilteredFriends);
+  const isOpenModal = useSelector(selectIsOpenModal);
+  const modalData = useSelector(selectModalData);
 
   const handleAddProfile = formData => {
-    const hasDuplicates = friends.some(
-      profile => profile.name === formData.name
-    );
-    if (hasDuplicates) {
-      alert(`Profile with name ${formData.name} already exists!`);
-      return;
-    }
-
     const finalProfile = {
       ...formData,
       id: Math.random().toString(),
@@ -61,12 +57,6 @@ export const App = () => {
     dispatch(action);
   };
 
-  const handleChangeFilter = event => {
-    const value = event.target.value;
-    const action = setFilter(value);
-    dispatch(action);
-  };
-
   const handleShowDetails = profileId => {
     const selectedProfile = friends.find(friend => friend.id === profileId);
     dispatch(openModal(selectedProfile));
@@ -77,13 +67,13 @@ export const App = () => {
     dispatch(closeModal()); // -> { type: '...' }
   };
 
-  const filteredProfiles = useMemo(
-    () =>
-      friends.filter(profile =>
-        profile.name.toLowerCase().includes(filter.trim().toLowerCase())
-      ),
-    [filter, friends]
-  );
+  // const filteredProfiles = useMemo(
+  //   () =>
+  //     friends.filter(profile =>
+  //       profile.name.toLowerCase().includes(filter.trim().toLowerCase())
+  //     ),
+  //   [filter, friends]
+  // );
 
   const sortedFiltedProfiles = useMemo(
     () => [...filteredProfiles].sort((a, b) => b.isFavourite - a.isFavourite),
@@ -92,20 +82,8 @@ export const App = () => {
 
   return (
     <div>
-      {filter.trim().toLowerCase() === 'christmas' && (
-        <p>Congrats, you won a promocode for a 35% discount - #4RF2A2; 🎉</p>
-      )}
       <AddProfileForm handleAddProfile={handleAddProfile} />
-      <div>
-        <p>Find Profile:</p>
-        <input
-          value={filter}
-          onChange={handleChangeFilter}
-          type="text"
-          name="keyword"
-          placeholder="Ivan..."
-        />
-      </div>
+      <Filter />
       <FriendList
         handlePrintProfileName={handlePrintProfileName}
         handleDeleteProfile={handleDeleteProfile}

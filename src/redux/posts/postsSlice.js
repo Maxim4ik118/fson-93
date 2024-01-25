@@ -32,7 +32,7 @@ export const apiGetPostDetails = createAsyncThunk(
 
 const initialState = {
   posts: null,
-  postDetails: null,
+  postDetailedData: null,
   status: STATUSES.idle, // "idle" | "pending" | "success" | "error"
   error: null,
   page: 1,
@@ -69,7 +69,7 @@ const postsSlice = createSlice({
       })
       .addCase(apiGetPostDetails.fulfilled, (state, action) => {
         state.status = STATUSES.success;
-        state.postDetails = action.payload;
+        state.postDetailedData = action.payload;
       })
       .addCase(apiGetPostDetails.rejected, (state, action) => {
         state.status = STATUSES.error;
