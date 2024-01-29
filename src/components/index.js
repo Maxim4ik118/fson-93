@@ -7,3 +7,5 @@ export { Modal } from './Modal/Modal';
 export { PostList } from './PostList/PostList';
 export { Profile } from './Profile/Profile';
 export { default as Filter } from './Filter/Filter';
+export { default as UserMenu } from './UserMenu/UserMenu';
+export { default as Navigation } from './Navigation/Navigation';

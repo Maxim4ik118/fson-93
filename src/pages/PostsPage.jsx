@@ -9,7 +9,7 @@ import {
   selectPostDetailsPage,
   selectPostDetailsPosts,
   selectPostDetailsStatus,
-} from 'redux/posts/postSlice.selectors';
+} from '../redux/posts/postSlice.selectors';
 import { POSTS_PER_PAGE, STATUSES } from 'utils/constants';
 
 import css from 'AppHTTPRequest.module.css';

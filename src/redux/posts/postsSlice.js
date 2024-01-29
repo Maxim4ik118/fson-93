@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { requestPostDetailsById, requestPosts } from 'services/api';
 import { STATUSES } from 'utils/constants';
@@ -48,33 +48,32 @@ const postsSlice = createSlice({
   },
   extraReducers: builder =>
     builder
-      .addCase(apiGetPosts.pending, (state, action) => {
-        state.status = STATUSES.pending;
-        state.error = null;
-      })
+      // ------ GET ALL POSTS
       .addCase(apiGetPosts.fulfilled, (state, action) => {
         state.status = STATUSES.success;
         state.posts = action.payload;
       })
-      .addCase(apiGetPosts.rejected, (state, action) => {
-        state.status = STATUSES.error;
-        state.error = action.payload;
-      })
-
       // ------ GET POST DETAILS
-
-      .addCase(apiGetPostDetails.pending, (state, action) => {
-        state.status = STATUSES.pending;
-        state.error = null;
-      })
       .addCase(apiGetPostDetails.fulfilled, (state, action) => {
         state.status = STATUSES.success;
         state.postDetailedData = action.payload;
       })
-      .addCase(apiGetPostDetails.rejected, (state, action) => {
-        state.status = STATUSES.error;
-        state.error = action.payload;
-      }),
+
+
+      .addMatcher(
+        isAnyOf(apiGetPosts.pending, apiGetPostDetails.pending),
+        state => {
+          state.status = STATUSES.pending;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(apiGetPosts.rejected, apiGetPostDetails.rejected),
+        (state, action) => {
+          state.status = STATUSES.error;
+          state.error = action.payload;
+        }
+      ),
 });
 
 export const { incrementPage } = postsSlice.actions;

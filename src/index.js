@@ -5,8 +5,7 @@ import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { App } from 'App';
-
+import AppHTTPRequests from 'AppHTTPRequests';
 import { persistor, store } from './redux/store';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
       <BrowserRouter basename="/react-homework-template">
-        <App />
+        <AppHTTPRequests />
         <ToastContainer
           position="top-center"
           autoClose={2000}

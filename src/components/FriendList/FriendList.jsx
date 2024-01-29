@@ -10,11 +10,6 @@ export const FriendList = ({
   handleDeleteProfile,
   handleShowDetails,
 }) => {
-  // const someName = useSelector(store => store.ssssssName);
-  // const products = useSelector(store => store.products);
-  // const error = useSelector(store => store.error);
-  // const isLoading = useSelector(store => store.isLoading);
-
   return (
     <div className={css.list}>
       {title && <h2>{title}</h2>}

@@ -1,44 +1,18 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import css from 'AppHTTPRequest.module.css';
+import { Navigation, UserMenu } from 'components';
+
+import { selectAuthIsLoggedIn } from '../../redux/auth/authSlice.selectors';
 
 export const Layout = ({ children }) => {
+  const isLoggedIn = useSelector(selectAuthIsLoggedIn)
+
   return (
     <div>
-      <header>
-        <NavLink
-          className={({ isActive }) =>
-            `${css.navLink} ${isActive ? css.active : ''}`
-          }
-          to="/"
-        >
-          Home
-        </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            `${css.navLink} ${isActive ? css.active : ''}`
-          }
-          to="/posts"
-        >
-          Posts
-        </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            `${css.navLink} ${isActive ? css.active : ''}`
-          }
-          to="/search"
-        >
-          Search Post
-        </NavLink>
-        <span> |||||| </span>
-        <a
-          href="https://www.linkedin.com/in/maxim-simonchuk-8493b5190/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LinkedIN
-        </a>
+      <header style={{ display: 'flex', alignItems: 'center' }}>
+        <Navigation />
+        {isLoggedIn && <UserMenu />}
       </header>
 
       <main>{children}</main>

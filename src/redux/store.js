@@ -15,19 +15,26 @@ import storage from 'redux-persist/lib/storage';
 import { friendsReducer } from './friends/friendsSlice';
 import { modalReducer } from './modal/modalSlice';
 import { postsReducer } from './posts/postsSlice';
+import { authReducer } from './auth/authSlice';
 
 const friendsConfig = {
   key: 'friends',
   storage,
   whitelist: ['friends'],
-  // blacklist: ['filter'],
+};
+
+const authConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['token'],
 };
 
 export const store = configureStore({
   reducer: {
     friendsScope: persistReducer(friendsConfig, friendsReducer),
     modal: modalReducer,
-    posts: postsReducer
+    posts: postsReducer,
+    auth: persistReducer(authConfig, authReducer),
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

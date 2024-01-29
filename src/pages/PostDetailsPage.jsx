@@ -15,8 +15,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { apiGetPostDetails } from '../redux/posts/postsSlice';
 
+import {
+  selectPostDetails,
+  selectPostDetailsError,
+  selectPostDetailsStatus,
+} from '../redux/posts/postSlice.selectors';
+
 import css from 'AppHTTPRequest.module.css';
-import { selectPostDetails, selectPostDetailsError, selectPostDetailsStatus } from 'redux/posts/postSlice.selectors';
 
 // import CommentsPage from './CommentsPage';
 const CommentsPage = lazy(() => import('./CommentsPage'));
@@ -32,7 +37,7 @@ const PostDetailsPage = () => {
   const error = useSelector(selectPostDetailsError);
 
   useEffect(() => {
-   dispatch(apiGetPostDetails(postId))
+    dispatch(apiGetPostDetails(postId));
   }, [postId, dispatch]);
 
   return (
@@ -41,7 +46,7 @@ const PostDetailsPage = () => {
       <Link to={backLinkRef.current}>Go back</Link>
       {status === STATUSES.pending && <Loader className={css.loader} />}
       {status === STATUSES.error && <ErrorMessage error={error} />}
-      {status === STATUSES.success && (
+      {status === STATUSES.success && postDetails !== null && (
         <div>
           <h3>Title: {postDetails.title}</h3>
           <p>Body: {postDetails.body}</p>
