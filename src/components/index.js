@@ -9,3 +9,5 @@ export { Profile } from './Profile/Profile';
 export { default as Filter } from './Filter/Filter';
 export { default as UserMenu } from './UserMenu/UserMenu';
 export { default as Navigation } from './Navigation/Navigation';
+export { default as RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
+export { default as PrivateRoute } from './PrivateRoute/PrivateRoute';

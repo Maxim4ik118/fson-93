@@ -9,6 +9,10 @@ const setToken = token => {
   $authInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
+const clearToken = () => {
+  $authInstance.defaults.headers.common.Authorization = '';
+};
+
 export const apiRegisterUser = createAsyncThunk(
   'auth/apiRegisterUser',
   async (formData, thunkApi) => {
@@ -19,7 +23,7 @@ export const apiRegisterUser = createAsyncThunk(
 
       return data;
     } catch (error) {
-      thunkApi.rejectWithValue(error.message);
+      return thunkApi.rejectWithValue(error.message);
     }
   }
 );
@@ -34,7 +38,21 @@ export const apiLoginUser = createAsyncThunk(
 
       return data;
     } catch (error) {
-      thunkApi.rejectWithValue(error.message);
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const apiLogoutUser = createAsyncThunk(
+  'auth/apiLogoutUser',
+  async (_, thunkApi) => {
+    try {
+      await $authInstance.post('/users/logout');
+      clearToken();
+
+      return;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
     }
   }
 );
@@ -86,12 +104,16 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.userData = action.payload;
       })
+      .addCase(apiLogoutUser.fulfilled, () => {
+        return initialState;
+      })
 
       .addMatcher(
         isAnyOf(
           apiRegisterUser.pending,
           apiLoginUser.pending,
-          apiRefreshUser.pending
+          apiRefreshUser.pending,
+          apiLogoutUser.pending,
         ),
         state => {
           state.isLoading = true;
@@ -102,7 +124,8 @@ const authSlice = createSlice({
         isAnyOf(
           apiRegisterUser.rejected,
           apiLoginUser.rejected,
-          apiRefreshUser.rejected
+          apiRefreshUser.rejected,
+          apiLogoutUser.rejected,
         ),
         (state, action) => {
           state.isLoading = false;

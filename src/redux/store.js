@@ -16,6 +16,7 @@ import { friendsReducer } from './friends/friendsSlice';
 import { modalReducer } from './modal/modalSlice';
 import { postsReducer } from './posts/postsSlice';
 import { authReducer } from './auth/authSlice';
+import { contactsReducer } from './contacts/contactsSlice';
 
 const friendsConfig = {
   key: 'friends',
@@ -35,6 +36,7 @@ export const store = configureStore({
     modal: modalReducer,
     posts: postsReducer,
     auth: persistReducer(authConfig, authReducer),
+    contacts: contactsReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

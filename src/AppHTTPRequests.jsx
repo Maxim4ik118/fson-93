@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { Layout, Loader } from 'components';
+import { Layout, Loader, PrivateRoute, RestrictedRoute } from 'components';
 
 import { apiRefreshUser } from './redux/auth/authSlice';
 
@@ -28,12 +28,54 @@ export default function AppHTTPRequests() {
       <Suspense fallback={<Loader className={css.loader} />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/contacts" element={<ContactsPage />} />
-          <Route path="/posts" element={<PostsPage />} />
-          <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
-          <Route path="/search" element={<SearchPostPage />} />
+          <Route
+            path="/register"
+            element={
+              <RestrictedRoute>
+                <RegisterPage />
+              </RestrictedRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <RestrictedRoute>
+                <LoginPage />
+              </RestrictedRoute>
+            }
+          />
+          <Route
+            path="/contacts"
+            element={
+              <PrivateRoute>
+                <ContactsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/posts"
+            element={
+              <PrivateRoute>
+                <PostsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/posts/:postId/*"
+            element={
+              <PrivateRoute>
+                <PostDetailsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <PrivateRoute>
+                <SearchPostPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>
